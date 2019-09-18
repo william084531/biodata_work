@@ -8,8 +8,8 @@ import torch.utils.data as Data
 import torch.nn as nn
 from torch.autograd import Variable
 #load 資料進入
-train_d = pd.read_csv('Drive/ecg_competition/train_ecg.csv')
-train_d = train_d.set_index('index_label')
+train_d = pd.read_csv('Drive/ecg_competition/train_ecg.csv') # 在''內放入你的檔案所在的路徑
+train_d = train_d.set_index('index_label') #將檔案內的資料重新定義index
 train_t = np.load('Drive/ecg_competition/train_label_ecg.npy')
 test_d = pd.read_csv('Drive/ecg_competition/test_ecg.csv')
 test_d = test_d.set_index('index_label')
@@ -72,10 +72,13 @@ cnn = CNN()
 use_cuda = True
 if use_cuda and torch.cuda.is_available():
     cnn.cuda()
-#load 先前的model
-model_save_name = 'params_cnn_2019_9_13.pkl'
+#load 先前的model (colab)
+model_save_name = '你訓練好之模型的檔案名稱'
 path = F"/content/gdrive/My Drive/{model_save_name}" 
 cnn.load_state_dict(torch.load(path))
+
+#load 先前的model (一般)
+cnn.load_state_dict(torch.load('路徑加你的檔案名稱'))
 
 loss_func = nn.CrossEntropyLoss() # 已經內涵softmax所以不需要另外加
 optimizer = torch.optim.Adam(cnn.parameters(), lr = lr)   # optimize all cnn parameters(控制模型學習率的變化)
@@ -150,7 +153,9 @@ for e in range(1):
     print('epoch: {}, Train Loss: {:.6f}, Train Acc: {:.6f}, Eval Loss: {:.6f}, Eval Acc: {:.6f}'
           .format(e, train_loss / len(train_loader), train_acc / len(train_loader), 
                      eval_loss / len(test_loader), eval_acc / len(test_loader)))
-# 儲存訓練好的model
+# 儲存訓練好的model (colab)
     model_save_name = 'params_cnn_2019_9_13.pkl'
     path = F"/content/gdrive/My Drive/{model_save_name}" 
     torch.save(cnn.state_dict(), path)
+# 儲存訓練好的model (一般)
+    torch.save(cnn.state_dict(), '你要儲存的路徑與檔案名稱')
